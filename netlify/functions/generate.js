@@ -22,10 +22,18 @@ exports.handler = async (event) => {
     });
 
     const data = await response.json();
+    
+    const text = data.content && data.content[0] && data.content[0].text 
+      ? data.content[0].text 
+      : '';
+
     return {
       statusCode: 200,
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
+      headers: { 
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*'
+      },
+      body: JSON.stringify({ text: text })
     };
   } catch (err) {
     return {
