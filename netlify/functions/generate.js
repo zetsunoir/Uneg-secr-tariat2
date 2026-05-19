@@ -4,7 +4,16 @@ exports.handler = async (event) => {
   }
 
   try {
-    const { system, user } = JSON.parse(event.body);
+    const body = JSON.parse(event.body);
+    const system = body.system;
+    const user = body.user;
+
+    if (!system || !user) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ text: 'Paramètres manquants: ' + JSON.stringify(body) })
+      };
+    }
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -22,23 +31,17 @@ exports.handler = async (event) => {
     });
 
     const data = await response.json();
-    
-    const text = data.content && data.content[0] && data.content[0].text 
-      ? data.content[0].text 
-      : '';
+    const text = data.content?.[0]?.text || JSON.stringify(data);
 
     return {
       statusCode: 200,
-      headers: { 
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*'
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ text: text })
     };
   } catch (err) {
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: err.message })
+      body: JSON.stringify({ text: 'ERREUR: ' + err.message })
     };
   }
 };
