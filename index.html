@@ -478,7 +478,7 @@ window.genCourriel=async function(){
   const usr=`Rédige le corps d'un courriel officiel de l'UNEG:\n- Destinataire: ${dest}\n- Objet: ${objet}\n- Date: ${today.getDate()} ${mn[today.getMonth()]} ${today.getFullYear()}\n- Signé par: Le ${cLbl} de l'UNEG, ${sig}\n${inst?`- Instructions: ${inst}`:''}`;
   try{
     const r=await fetch('/.netlify/functions/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({system:sys,user:usr})});
-    const d=await r.json();genBody=d.content?.[0]?.text||'';
+    const d=await r.json();genBody=d.text||'';
     document.getElementById('mc-res').textContent=genBody;
     document.getElementById('btn-dl').disabled=false;document.getElementById('btn-cp').disabled=false;
     notify('Courriel généré !');
